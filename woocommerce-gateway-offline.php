@@ -5,7 +5,7 @@
  * Description: Clones the "Cheque" gateway to create another manual / offline payment method; can be used for testing as well.
  * Author: SkyVerge
  * Author URI: http://www.skyverge.com/
- * Version: 1.0.0
+ * Version: 1.0.1
  * Text Domain: wc-gateway-offline
  * Domain Path: /i18n/languages/
  *
@@ -56,7 +56,7 @@ add_filter( 'woocommerce_payment_gateways', 'wc_offline_add_to_gateways' );
 function wc_offline_gateway_plugin_links( $links ) {
 
 	$plugin_links = array(
-		'<a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_gateway_offline' ) . '">' . __( 'Settings', 'wc-gateway-offline' ) . '</a>'
+		'<a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_gateway_offline' ) . '">' . __( 'Configure', 'wc-gateway-offline' ) . '</a>'
 	);
 
 	return array_merge( $plugin_links, $links );

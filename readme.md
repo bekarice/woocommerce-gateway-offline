@@ -4,10 +4,10 @@
  - Tags: woocommerce, payment gateway, gateway, manual payment
  - [Donate link](https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=paypal@skyverge.com&item_name=Donation+for+WooCommerce+Offline+Gateway)
  - Requires at least: 3.8
- - Tested up to: 4.2
+ - Tested up to: 4.3
  - Requires WooCommerce at least: 2.1
- - Tested WooCommerce up to: 2.3
- - Stable Tag: 1.0.0
+ - Tested WooCommerce up to: 2.4
+ - Stable Tag: 1.0.1
  - License: GPLv3
  - License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -43,5 +43,8 @@ Please do! This is meant to be a simple starter offline gateway, and can be modi
 
 == Changelog ==
 
-= 2014.05.04 - version 1.0.0 =
+= 2015.07.27 - version 1.0.1 =
+ * Misc: WooCommerce 2.4 Compatibility
+
+= 2015.05.04 - version 1.0.0 =
  * Initial Release
