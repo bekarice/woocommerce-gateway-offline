@@ -1,15 +1,15 @@
 <?php
 /**
  * Plugin Name: WooCommerce Offline Gateway
- * Plugin URI: http://www.skyverge.com/product/woocommerce-offline-gateway/
+ * Plugin URI: https://www.skyverge.com/?p=3343
  * Description: Clones the "Cheque" gateway to create another manual / offline payment method; can be used for testing as well.
  * Author: SkyVerge
  * Author URI: http://www.skyverge.com/
- * Version: 1.0.1
+ * Version: 1.0.2
  * Text Domain: wc-gateway-offline
  * Domain Path: /i18n/languages/
  *
- * Copyright: (c) 2015-2015 SkyVerge, Inc. (info@skyverge.com) and WooThemes
+ * Copyright: (c) 2015-2016 SkyVerge, Inc. (info@skyverge.com) and WooCommerce
  *
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -17,19 +17,19 @@
  * @package   WC-Gateway-Offline
  * @author    SkyVerge
  * @category  Admin
- * @copyright Copyright (c) 2015-2015, SkyVerge, Inc. and WooThemes
+ * @copyright Copyright (c) 2015-2016, SkyVerge, Inc. and WooCommerce
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  *
  * This offline gateway forks the WooCommerce core "Cheque" payment gateway to create another offline payment method.
  */
  
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
-}
+defined( 'ABSPATH' ) or exit;
 
 
 // Make sure WooCommerce is active
-if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) return;
+if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+	return;
+}
 
 
 /**
@@ -56,7 +56,7 @@ add_filter( 'woocommerce_payment_gateways', 'wc_offline_add_to_gateways' );
 function wc_offline_gateway_plugin_links( $links ) {
 
 	$plugin_links = array(
-		'<a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_gateway_offline' ) . '">' . __( 'Configure', 'wc-gateway-offline' ) . '</a>'
+		'<a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section=offline_gateway' ) . '">' . __( 'Configure', 'wc-gateway-offline' ) . '</a>'
 	);
 
 	return array_merge( $plugin_links, $links );
@@ -77,6 +77,7 @@ add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'wc_offline_ga
  * @author 		SkyVerge
  */
 add_action( 'plugins_loaded', 'wc_offline_gateway_init', 11 );
+
 function wc_offline_gateway_init() {
 
 	class WC_Gateway_Offline extends WC_Payment_Gateway {
@@ -86,7 +87,7 @@ function wc_offline_gateway_init() {
 		 */
 		public function __construct() {
 	  
-			$this->id                 = 'offline';
+			$this->id                 = 'offline_gateway';
 			$this->icon               = apply_filters('woocommerce_offline_icon', '');
 			$this->has_fields         = false;
 			$this->method_title       = __( 'Offline', 'wc-gateway-offline' );
@@ -103,7 +104,7 @@ function wc_offline_gateway_init() {
 		  
 			// Actions
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
-			add_action( 'woocommerce_thankyou_offline', array( $this, 'thankyou_page' ) );
+			add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thankyou_page' ) );
 		  
 			// Customer Emails
 			add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 3 );
@@ -123,6 +124,7 @@ function wc_offline_gateway_init() {
 					'label'   => __( 'Enable Offline Payment', 'wc-gateway-offline' ),
 					'default' => 'yes'
 				),
+				
 				'title' => array(
 					'title'       => __( 'Title', 'wc-gateway-offline' ),
 					'type'        => 'text',
@@ -130,6 +132,7 @@ function wc_offline_gateway_init() {
 					'default'     => __( 'Offline Payment', 'wc-gateway-offline' ),
 					'desc_tip'    => true,
 				),
+				
 				'description' => array(
 					'title'       => __( 'Description', 'wc-gateway-offline' ),
 					'type'        => 'textarea',
@@ -137,6 +140,7 @@ function wc_offline_gateway_init() {
 					'default'     => __( 'Please remit payment to Store Name upon pickup or delivery.', 'wc-gateway-offline' ),
 					'desc_tip'    => true,
 				),
+				
 				'instructions' => array(
 					'title'       => __( 'Instructions', 'wc-gateway-offline' ),
 					'type'        => 'textarea',
@@ -168,7 +172,7 @@ function wc_offline_gateway_init() {
 		 */
 		public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
 		
-			if ( $this->instructions && ! $sent_to_admin && 'offline' === $order->payment_method && $order->has_status( 'on-hold' ) ) {
+			if ( $this->instructions && ! $sent_to_admin && $this->id === $order->payment_method && $order->has_status( 'on-hold' ) ) {
 				echo wpautop( wptexturize( $this->instructions ) ) . PHP_EOL;
 			}
 		}
@@ -200,5 +204,5 @@ function wc_offline_gateway_init() {
 			);
 		}
 	
-  } // end WC_Gateway_Offline class
+  } // end \WC_Gateway_Offline class
 }
